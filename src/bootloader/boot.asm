@@ -56,6 +56,7 @@ puts:
     jmp .loop 
 
 .done:
+    pop bx 
     pop ax
     pop si 
     ret 
@@ -79,6 +80,7 @@ main:
     mov si, msg_hello
     call puts 
 
+    cli 
     hlt
 
 floppy_error:
@@ -157,11 +159,11 @@ disk_read:
 .done:
     popa 
 
-    push di  
-    push dx 
-    push cx 
-    push bx 
-    push ax 
+    pop di  
+    pop dx 
+    pop cx 
+    pop bx 
+    pop ax 
     ret 
 
 disk_reset:
