@@ -1,4 +1,5 @@
 #include "kernel.h"
+
 unsigned short* VGA_BUFFER = (unsigned short*)0xB8000;
 
 void vga_clear_screen() {
