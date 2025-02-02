@@ -1,26 +1,46 @@
-CFLAGS = -ffreestanding -O2 -Wall -Wextra
+CFLAGS = -ffreestanding -O2 -Wall -Wextra -Iinclude
 LDFLAGS = -T linker.ld
+
+OBJ_DIR = build
+SRC_DIR = kernel
+BOOT_DIR = bootloader
+
+OBJS = $(OBJ_DIR)/kernel.o $(OBJ_DIR)/vga.o $(OBJ_DIR)/paging.o
 
 all: os-image
 
-kernel.elf: kernel.c vga.c
-	gcc $(CFLAGS) -c kernel.c -o kernel.o
-	gcc $(CFLAGS) -c vga.c -o vga.o
-	ld $(LDFLAGS) -o kernel.elf kernel.o vga.o
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-os-image: bootloader/boot.asm kernel.elf
-	nasm -f bin bootloader/boot.asm -o boot.bin
-	cat boot.bin kernel.elf > os-image
+$(OBJ_DIR)/kernel.o: $(SRC_DIR)/kernel.c | $(OBJ_DIR)
+	@echo "Compiling kernel.c"
+	gcc $(CFLAGS) -c $(SRC_DIR)/kernel.c -o $(OBJ_DIR)/kernel.o
 
-iso: os-image
-	mkdir -p iso/boot/grub
-	cp os-image iso/boot/kernel.bin
-	echo 'set timeout=0\nset default=0\nmenuentry "My OS" {\n  multiboot /boot/kernel.bin\n}' > iso/boot/grub/grub.cfg
-	grub-mkrescue -o myos.iso iso
+$(OBJ_DIR)/vga.o: $(SRC_DIR)/vga.c | $(OBJ_DIR)
+	@echo "Compiling vga.c"
+	gcc $(CFLAGS) -c $(SRC_DIR)/vga.c -o $(OBJ_DIR)/vga.o
+
+$(OBJ_DIR)/paging.o: $(SRC_DIR)/paging.c | $(OBJ_DIR)
+	@echo "Compiling paging.c"
+	gcc $(CFLAGS) -c $(SRC_DIR)/paging.c -o $(OBJ_DIR)/paging.o
+
+kernel.elf: $(OBJS)
+	@echo "Linking kernel.elf"
+	ld $(LDFLAGS) -o kernel.elf $(OBJS) --oformat elf32-i386
+
+kernel.bin: kernel.elf
+	@echo "Generating kernel.bin"
+	objcopy -O binary kernel.elf kernel.bin
+
+os-image: $(BOOT_DIR)/boot.asm kernel.bin
+	@echo "Building OS image"
+	nasm -f bin $(BOOT_DIR)/boot.asm -o boot.bin
+	cat boot.bin kernel.bin > os-image
 
 run: os-image
-	qemu-system-i386 -cdrom myos.iso
+	@echo "Running OS in QEMU"
+	qemu-system-i386 -kernel kernel.bin
 
 clean:
-	rm -f *.o *.bin *.elf os-image myos.iso
-	rm -rf iso
+	@echo "Cleaning up..."
+	rm -rf $(OBJ_DIR) *.bin *.elf os-image

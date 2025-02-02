@@ -1,4 +1,5 @@
-#include "kernel.h"
+#include "../include/kernel.h"
+#include "../include/paging.h"
 
 void kernel_main() {
     vga_clear_screen();
