@@ -11,7 +11,8 @@ OBJS = $(OBJ_DIR)/kernel.o \
        $(OBJ_DIR)/vga.o \
        $(OBJ_DIR)/paging.o \
        $(OBJ_DIR)/paging_asm.o \
-       $(OBJ_DIR)/frame_allocator.o
+       $(OBJ_DIR)/frame_allocator.o\
+	   $(OBJ_DIR)/panic.o
 
 all: os-image
 
@@ -36,6 +37,11 @@ $(OBJ_DIR)/paging.o: $(SRC_DIR)/paging.c | $(OBJ_DIR)
 $(OBJ_DIR)/frame_allocator.o: $(SRC_DIR)/frame_allocator.c | $(OBJ_DIR)
 	@echo "Compiling frame_allocator.c..."
 	gcc $(CFLAGS) -c $(SRC_DIR)/frame_allocator.c -o $@
+
+$(OBJ_DIR)/panic.o: $(SRC_DIR)/panic.c | $(OBJ_DIR)
+	@echo "Compiling panic.c..."
+	gcc $(CFLAGS) -c $< -o $@
+
 
 # Assemble paging.asm
 $(OBJ_DIR)/paging_asm.o: $(ASM_DIR)/paging.asm | $(OBJ_DIR)

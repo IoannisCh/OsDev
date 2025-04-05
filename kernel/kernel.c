@@ -10,3 +10,4 @@ void kernel_main() {
 void _start(void) {  // Or int _start(void) - check your ABI
     kernel_main(); // Call your kernel's main function
 }
+
