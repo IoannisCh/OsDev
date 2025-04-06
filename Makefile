@@ -12,7 +12,10 @@ OBJS = $(OBJ_DIR)/kernel.o \
        $(OBJ_DIR)/paging.o \
        $(OBJ_DIR)/paging_asm.o \
        $(OBJ_DIR)/frame_allocator.o\
-	   $(OBJ_DIR)/panic.o
+	   $(OBJ_DIR)/panic.o\
+	   $(OBJ_DIR)/keyboard.o\
+	   $(OBJ_DIR)/idt.o 
+
 
 all: os-image
 
@@ -42,6 +45,13 @@ $(OBJ_DIR)/panic.o: $(SRC_DIR)/panic.c | $(OBJ_DIR)
 	@echo "Compiling panic.c..."
 	gcc $(CFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/keyboard.o: $(SRC_DIR)/keyboard.c | $(OBJ_DIR)
+	@echo "Compiling keyboard.c..."
+	gcc $(CFLAGS) -c $(SRC_DIR)/keyboard.c -o $@
+
+$(OBJ_DIR)/idt.o: $(SRC_DIR)/idt.c | $(OBJ_DIR)
+	@echo "Compiling idt.c..."
+	gcc $(CFLAGS) -c $(SRC_DIR)/idt.c -o $@
 
 # Assemble paging.asm
 $(OBJ_DIR)/paging_asm.o: $(ASM_DIR)/paging.asm | $(OBJ_DIR)

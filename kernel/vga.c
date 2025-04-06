@@ -15,3 +15,15 @@ void vga_print(const char* str) {
         i++;
     }
 }
+
+void print_char(char c) {
+    volatile char *video = (volatile char*)0xB8000;
+    *video = c;
+}
+
+void print_string(const char *str) {
+    while (*str) {
+        print_char(*str++);
+    }
+}
+

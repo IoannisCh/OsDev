@@ -52,4 +52,8 @@ void free_frame(uint32_t addr){
     clear_frame(addr);
 }
 
+void init_frame_allocator(void) {
+    // dummy implementation for now
+}
+
 
