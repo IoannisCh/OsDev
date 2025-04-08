@@ -23,3 +23,5 @@ void init_idt();
 void register_interrupt_handler(uint8_t n, void (*handler)(void));
 
 extern void load_idt_internal(void);
+
+void load_idt(void* idtr);

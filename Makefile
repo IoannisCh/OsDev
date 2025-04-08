@@ -15,7 +15,8 @@ OBJS = $(OBJ_DIR)/kernel.o \
 	   $(OBJ_DIR)/panic.o\
 	   $(OBJ_DIR)/keyboard.o\
 	   $(OBJ_DIR)/idt.o\
-	   $(OBJ_DIR)/isr.o
+	   $(OBJ_DIR)/isr.o\
+	   $(OBJ_DIR)/load_idt.o 
 
 
 all: os-image
@@ -54,13 +55,14 @@ $(OBJ_DIR)/idt.o: $(SRC_DIR)/idt.c | $(OBJ_DIR)
 	@echo "Compiling idt.c..."
 	gcc $(CFLAGS) -c $(SRC_DIR)/idt.c -o $@
 
-$(OBJ_DIR)/idt.o: $(SRC_DIR)/idt.c | $(OBJ_DIR)
-	@echo "Compiling idt.c..."
-	gcc $(CFLAGS) -c $(SRC_DIR)/idt.c -o $@
-
 $(OBJ_DIR)/isr.o: $(ASM_DIR)/isr.asm | $(OBJ_DIR)
 	@echo "Assembling isr_stubs.asm..."
 	nasm -f elf32 $(ASM_DIR)/isr.asm -o $@
+
+$(OBJ_DIR)/load_idt.o: $(ASM_DIR)/load_idt.asm | $(OBJ_DIR)
+	@echo "Assembling load_idt.asm..."
+	nasm -f elf32 $(ASM_DIR)/load_idt.asm -o $@
+
 
 # Assemble paging.asm
 $(OBJ_DIR)/paging_asm.o: $(ASM_DIR)/paging.asm | $(OBJ_DIR)
