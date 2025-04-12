@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "vga.h"
 #include "stdint.h"
+#include "../include/isr.h"
 
 extern void isr_stub_0();
 extern void isr_stub_1();
@@ -29,6 +30,7 @@ void init_idt() {
     set_idt_gate(2, (uint32_t)isr_stub_2);
     set_idt_gate(3, (uint32_t)isr_stub_3);
     // Add more if needed...
+    set_idt_gate(33, (uint32_t)isr_stub_33);
 
     // Prepare IDTR
     struct {
@@ -54,3 +56,5 @@ void isr_handler(uint32_t interrupt_number) {
         // You might want to print the number too here
     }
 }
+
+extern void isr_stub_33();

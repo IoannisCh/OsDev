@@ -56,8 +56,9 @@ $(OBJ_DIR)/idt.o: $(SRC_DIR)/idt.c | $(OBJ_DIR)
 	gcc $(CFLAGS) -c $(SRC_DIR)/idt.c -o $@
 
 $(OBJ_DIR)/isr.o: $(ASM_DIR)/isr.asm | $(OBJ_DIR)
-	@echo "Assembling isr_stubs.asm..."
-	nasm -f elf32 $(ASM_DIR)/isr.asm -o $@
+	@echo "Assembling isr.asm..."
+	nasm -f elf32 $(ASM_DIR)/isr.asm -o $(OBJ_DIR)/isr.o
+
 
 $(OBJ_DIR)/load_idt.o: $(ASM_DIR)/load_idt.asm | $(OBJ_DIR)
 	@echo "Assembling load_idt.asm..."
