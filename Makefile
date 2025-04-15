@@ -57,7 +57,7 @@ $(OBJ_DIR)/idt.o: $(SRC_DIR)/idt.c | $(OBJ_DIR)
 
 $(OBJ_DIR)/isr.o: $(ASM_DIR)/isr.asm | $(OBJ_DIR)
 	@echo "Assembling isr.asm..."
-	nasm -f elf32 $(ASM_DIR)/isr.asm -o $(OBJ_DIR)/isr.o
+	nasm -f elf32 $(ASM_DIR)/isr.asm -o $@
 
 
 $(OBJ_DIR)/load_idt.o: $(ASM_DIR)/load_idt.asm | $(OBJ_DIR)

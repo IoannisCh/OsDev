@@ -1,46 +1,51 @@
-global isr_stub_0
-global isr_stub_1
-global isr_stub_2
-global isr_stub_3
-; Add more stubs as needed for other interrupts
+; isr.asm — Interrupt Service Routine stubs
+
+[BITS 32]
 
 section .text
-; Define stubs for interrupt handlers
+
+; === Manual stubs ===
+global isr_stub_0
 isr_stub_0:
     pusha
-    ; Your interrupt logic goes here (or just return)
+    ; Your interrupt logic here
     popa
     iret
 
+global isr_stub_1
 isr_stub_1:
     pusha
-    ; Your interrupt logic goes here (or just return)
+    ; Your interrupt logic here
     popa
     iret
 
+global isr_stub_2
 isr_stub_2:
     pusha
-    ; Your interrupt logic goes here (or just return)
+    ; Your interrupt logic here
     popa
     iret
 
+global isr_stub_3
 isr_stub_3:
     pusha
-    ; Your interrupt logic goes here (or just return)
+    ; Your interrupt logic here
     popa
     iret
 
-; Define more stubs if necessary
+; === Special handler for interrupt 33 (keyboard) ===
 global isr_stub_33
 isr_stub_33:
     cli
-    push byte 0
-    push 33
+    push byte 0          ; Dummy error code
+    push 33              ; Interrupt number
     jmp isr_common_stub
+    iret 
 
-extern isr_handler        ; from C
+; === Common handler for all interrupts that push int number and dummy err code ===
+extern isr_handler       ; C function
 isr_common_stub:
-    pusha                  ; push all general-purpose registers
+    pusha
     push ds
     push es
     push fs
@@ -59,6 +64,21 @@ isr_common_stub:
     pop es
     pop ds
     popa
-    add esp, 8             ; pop error code + interrupt number
+    add esp, 8           ; Remove error code and interrupt number
     sti
     iret
+
+; === Macro-generated generic ISRs ===
+%macro ISR_NOERRCODE 1
+%if %1 != 0 && %1 != 1 && %1 != 2 && %1 != 3 && %1 != 33
+global isr_stub_%1
+isr_stub_%1:
+    iret
+%endif
+%endmacro
+
+%assign i 0
+%rep 256
+    ISR_NOERRCODE i
+%assign i i+1
+%endrep

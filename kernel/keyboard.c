@@ -35,12 +35,16 @@ static inline uint8_t inb(uint16_t port){
 void keyboard_handler(){
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 
+    print_string("Key pressed: ");
+    print_char(scancode);
+
     if(scancode < sizeof(keymap)){
         char c = keymap[scancode];
         if (c) {
             print_char(c);
         }
     }
+    print_string("Keyboard interrupt received. \n");
 }
 
 void init_keyboard(){

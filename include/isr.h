@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
-void isr_handler(uint32_t interrupt_number);
+extern void isr_stub_0(void);
+extern void isr_stub_1(void);
+extern void isr_stub_2(void);
+extern void isr_stub_3(void);
+extern void iser_stub_33(void);
 
 #endif
