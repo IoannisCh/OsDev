@@ -1,9 +1,11 @@
 #include "../include/keyboard.h"
 #include "../include/kernel.h"
 #include "../include/vga.h"
+#include "../include/isr.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "stddef.h"
+#include "../include/io.h"
 
 #define KEYBOARD_DATA_PORT 0x60 
 
@@ -26,12 +28,6 @@ static const char keymap[] = {
 
 };
 
-static inline uint8_t inb(uint16_t port){
-    uint8_t result;
-    asm volatile("inb %1, %0" : "=a"(result) : "Nd"(port));
-    return result;
-}
-
 void keyboard_handler(){
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 
@@ -45,8 +41,14 @@ void keyboard_handler(){
         }
     }
     print_string("Keyboard interrupt received. \n");
+
+    outb(0x20, 0x20);
 }
 
 void init_keyboard(){
     register_interrupt_handler(33, keyboard_handler);
+
+    uint8_t mask = inb(0x21);
+    mask &= ~(1 << 1);
+    outb(0x21, mask);
 }

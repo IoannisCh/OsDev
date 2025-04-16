@@ -35,10 +35,11 @@ isr_stub_3:
 
 ; === Special handler for interrupt 33 (keyboard) ===
 global isr_stub_33
+extern isr_common_stub
 isr_stub_33:
     cli
     push byte 0          ; Dummy error code
-    push 33              ; Interrupt number
+    push byte 33              ; Interrupt number
     jmp isr_common_stub
     iret 
 

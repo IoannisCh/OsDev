@@ -30,6 +30,7 @@ void init_idt() {
     set_idt_gate(2, (uint32_t)isr_stub_2);
     set_idt_gate(3, (uint32_t)isr_stub_3);
     // Add more if needed...
+    set_idt_gate(33, (uint32_t)isr_stub_33);
 
 
     // Prepare IDTR
@@ -44,13 +45,14 @@ void init_idt() {
     load_idt(&idtr);  // Call your asm function to load the IDT
 }
 
-void register_interrupt_handler(uint8_t n, void (*handler)(void)) {
+void register_interrupt_handler(uint8_t n, isr_t handler) {
     interrupt_handlers[n] = handler;
 }
 
-void isr_handler(uint32_t interrupt_number) {
-    if (interrupt_handlers[interrupt_number]) {
-        interrupt_handlers[interrupt_number]();
+
+void isr_handler(registers_t regs) {
+    if (interrupt_handlers[regs.int_no]) {
+        interrupt_handlers[regs.int_no]();
     } else {
         print_string("Unhandled interrupt: ");
         // You might want to print the number too here

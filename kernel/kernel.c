@@ -25,6 +25,8 @@ void vga_init() {
 }
 
 void kernel_main() {
+    
+
     remap_pic();
     vga_init();
     init_paging();
@@ -33,11 +35,15 @@ void kernel_main() {
 
     print_string("Welcome to HadOS!\n");
 
+    extern void load_idt();
+    load_idt();
+
     asm volatile("sti");
 
     while (1) {
         asm volatile("hlt");
     }
+    
 }
 void port_byte_out(uint16_t port, uint8_t data){
     asm volatile("outb %0, %1" : : "a"(data), "Nd"(port));
@@ -46,4 +52,6 @@ void port_byte_out(uint16_t port, uint8_t data){
 void _start(void) {  // Or int _start(void) - check your ABI
     kernel_main(); // Call your kernel's main function
 }
+
+
 
