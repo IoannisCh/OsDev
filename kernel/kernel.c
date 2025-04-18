@@ -25,25 +25,22 @@ void vga_init() {
 }
 
 void kernel_main() {
-    
-
     remap_pic();
     vga_init();
+
+    init_idt();       // Sets IDT gates
+    load_idt();       // Load the IDT right after it's set up
+
     init_paging();
     init_frame_allocator();
-    init_keyboard();
+
+    init_keyboard();  // Now it's safe to register handlers
 
     print_string("Welcome to HadOS!\n");
 
-    extern void load_idt();
-    load_idt();
-
     asm volatile("sti");
 
-    while (1) {
-        asm volatile("hlt");
-    }
-    
+    while (1) asm volatile("hlt");
 }
 void port_byte_out(uint16_t port, uint8_t data){
     asm volatile("outb %0, %1" : : "a"(data), "Nd"(port));

@@ -28,11 +28,11 @@ static const char keymap[] = {
 
 };
 
-void keyboard_handler(){
+/*void keyboard_handler(){
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 
     print_string("Key pressed: ");
-    print_char(scancode);
+    print_hex(scancode);
 
     if(scancode < sizeof(keymap)){
         char c = keymap[scancode];
@@ -43,7 +43,7 @@ void keyboard_handler(){
     print_string("Keyboard interrupt received. \n");
 
     outb(0x20, 0x20);
-}
+} */
 
 static void keyboard_callback(registers_t regs){
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
@@ -51,10 +51,12 @@ static void keyboard_callback(registers_t regs){
     print_string("Key pressed! Scancod: ");
     print_hex(scancode);
     print_string("\n");
+
+    outb(0x20, 0x20);
 }
 
 void init_keyboard(){
-    register_interrupt_handler(33, keyboard_handler);
+    register_interrupt_handler(33, keyboard_callback);
 
     uint8_t mask = inb(0x21);
     mask &= ~(1 << 1);
