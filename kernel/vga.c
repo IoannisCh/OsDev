@@ -27,3 +27,9 @@ void print_string(const char *str) {
     }
 }
 
+void print_hex(uint8_t num){
+    const char* hex = "0123456789ABCDEF";
+    print_char(hex[(num >> 4) & 0xF]);
+    print_char(hex[num & 0xF]);
+}
+

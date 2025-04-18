@@ -45,6 +45,14 @@ void keyboard_handler(){
     outb(0x20, 0x20);
 }
 
+static void keyboard_callback(registers_t regs){
+    uint8_t scancode = inb(KEYBOARD_DATA_PORT);
+
+    print_string("Key pressed! Scancod: ");
+    print_hex(scancode);
+    print_string("\n");
+}
+
 void init_keyboard(){
     register_interrupt_handler(33, keyboard_handler);
 
