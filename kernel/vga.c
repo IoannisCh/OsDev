@@ -33,3 +33,13 @@ void print_hex(uint8_t num){
     print_char(hex[num & 0xF]);
 }
 
+void move_cursor_back(){
+    if (cursor_col > 0){
+        cursor_col--;
+    } else if (cursor_row > 0) {
+        cursor_row--;
+        curso_col = VGA_WIDTH - 1;
+    }
+
+    update_cursor(cursor_row, cursor_col);
+}

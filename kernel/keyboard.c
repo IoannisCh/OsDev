@@ -7,7 +7,11 @@
 #include "stddef.h"
 #include "../include/io.h"
 
-#define KEYBOARD_DATA_PORT 0x60 
+#define KEYBOARD_DATA_PORT 0x60
+#define INPUT_BUFFER_SIZE 256
+
+static char input_buffer[INPUT_BUFFER_SIZE];
+static uint8_t buffer_index = 0;
 
 static const char keymap[] = {
     0, 27, '1', '2', '3', '4', '5', '6',
@@ -48,11 +52,38 @@ static const char keymap[] = {
 static void keyboard_callback(registers_t regs){
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
 
-    print_string("Key pressed! Scancod: ");
-    print_hex(scancode);
-    print_string("\n");
+   if (scancode >= sizeof(keymap)) return;
 
-    outb(0x20, 0x20);
+   char key = keymap[scancode];
+
+   switch (key) {
+    case '\b': 
+        if (buffer_index > 0){
+            buffer_index--;
+            input_buffer[buffer_index] = 0;
+            move_cursor_back();
+            print_char(' ');
+            move_cursor_back();
+        }
+        break;
+
+    case '\n':
+    input_buffer[buffer_index] = '\0';
+    print_char('\n');
+
+    buffer_index = 0;
+
+    break;
+
+    default:
+        if (key && buffer_index < INPUT_BUFFER_SIZE -1 ) {
+            input_buffer[buffer_index++] = key;
+            print_char(key);
+        }
+        break;
+   }
+
+   outb(0x20, 0x20);
 }
 
 void init_keyboard(){
