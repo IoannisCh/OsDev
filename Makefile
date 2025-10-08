@@ -132,7 +132,7 @@ iso: os-image
 	grub-mkrescue -o os-image.iso $(ISO_DIR)
 
 # Run using QEMU
-run: os-image.iso
+run: iso
 	@echo "Running OS in QEMU..."
 	qemu-system-i386 -cdrom os-image.iso -vga std -m 512
 
