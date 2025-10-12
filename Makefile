@@ -22,7 +22,8 @@ OBJS = $(OBJ_DIR)/kernel.o \
        $(OBJ_DIR)/idt.o\
        $(OBJ_DIR)/isr.o\
        $(OBJ_DIR)/load_idt.o\
-       $(OBJ_DIR)/io.o
+       $(OBJ_DIR)/io.o\
+	   $(OBJ_DIR)/shell.o
 
 all: os-image
 
@@ -101,6 +102,10 @@ $(OBJ_DIR)/load_idt.o: $(ASM_DIR)/load_idt.asm | $(OBJ_DIR)
 $(OBJ_DIR)/io.o: $(ASM_DIR)/io.asm | $(OBJ_DIR)
 	@echo "Assembling io.asm..."
 	nasm -f elf32 $(ASM_DIR)/io.asm -o $@
+
+$(OBJ_DIR)/shell.o: $(SRC_DIR)/shell.c | $(OBJ_DIR)
+	@echo "Compiling shell.c..."
+	gcc $(CFLAGS) -c $(SRC_DIR)/shell.c -o $@
 
 # Assemble paging.asm
 $(OBJ_DIR)/paging_asm.o: $(ASM_DIR)/paging.asm | $(OBJ_DIR)

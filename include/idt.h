@@ -7,6 +7,8 @@
 
 #define IDT_ENTRIES 256
 
+void init_idt();
+void load_idt();
 typedef struct {
     uint16_t base_low;
     uint16_t sel;

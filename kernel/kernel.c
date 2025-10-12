@@ -3,6 +3,7 @@
 #include "../include/keyboard.h"
 #include "../include/vga.h"
 #include "../include/frame_allocator.h"
+#include "../include/shell.h"
 
 void remap_pic() {
     // Remap the PICs to new interrupt vectors
@@ -30,9 +31,11 @@ void kernel_main() {
     init_paging();
     init_frame_allocator();
 
-    init_keyboard();  // Now it's safe to register handlers
+    keyboard_init();  // Now it's safe to register handlers
 
     vga_print("Welcome to HadOS!\n");
+
+    shell_run();
 
     asm volatile("sti");
 
@@ -45,6 +48,5 @@ void port_byte_out(uint16_t port, uint8_t data){
 void _start(void) {  // Or int _start(void) - check your ABI
     kernel_main(); // Call your kernel's main function
 }
-
 
 
