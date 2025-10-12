@@ -3,44 +3,48 @@
 
 #include <stdint.h>
 
-typedef enum{
-    VGA_COLOR_BLACK = 0,
-    VGA_COLOR_BLUE = 1,
-    VGA_COLOR_GREEN = 2,
-    VGA_COLOR_CYAN = 3,
-    VGA_COLOR_RED = 4,
-    VGA_COLOR_MAGENTA = 5,
-    VGA_COLOR_BROWN = 6,
-    VGA_COLOR_LIGHT_GREY = 7,
-    VGA_COLOR_DARK_GREY = 8,
-    VGA_COLOR_LIGHT_BLUE = 9,
-    VGA_COLOR_LIGHT_GREEN = 10,
-    VGA_COLOR_LIGHT_CYAN = 11,
-    VGA_COLOR_LIGHT_RED = 12,
-    VGA_COLOR_LIGHT_MAGENTA = 13,
-    VGA_COLOR__LIGHT_BROWN = 14,
-    VGA_COLOR__WHITE = 15,
-} vga_color;
-
+// VGA constants
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
-void vga_init(void);
+#define VGA_ADDRESS 0xB8000
 
-void clear_screen(void);
-void print_char(char c);
-void print_string(const char* str);
+// VGA colors
+enum vga_color {
+    COLOR_BLACK = 0,
+    COLOR_BLUE = 1,
+    COLOR_GREEN = 2,
+    COLOR_CYAN = 3,
+    COLOR_RED = 4,
+    COLOR_MAGENTA = 5,
+    COLOR_BROWN = 6,
+    COLOR_LIGHT_GREY = 7,
+    COLOR_DARK_GREY = 8,
+    COLOR_LIGHT_BLUE = 9,
+    COLOR_LIGHT_GREEN = 10,
+    COLOR_LIGHT_CYAN = 11,
+    COLOR_LIGHT_RED = 12,
+    COLOR_LIGHT_MAGENTA = 13,
+    COLOR_LIGHT_BROWN = 14,
+    COLOR_WHITE = 15,
+};
 
+// Extern cursor position
+extern uint8_t cursor_row;
+extern uint8_t cursor_col;
+
+// VGA functions
+void vga_init();
+void vga_clear_screen();
+void vga_set_color(enum vga_color fg, enum vga_color bg);
+void vga_put_char(char c);
+void vga_print(const char *str);
 void print_hex(uint32_t value);
 
-void move_cursor(void);
-
-void set_cursor_pos(int row, int col);
-
-void set_color(vga_color fg, vga_color bg);
-
-void scroll_up(void);
-
-extern int cursor_row;
-extern int cursor_col;
+// Cursor control
+void move_cursor();
+void move_cursor_left();
+void move_cursor_right();
+void move_cursor_up();
+void move_cursor_down();
 
 #endif

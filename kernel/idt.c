@@ -55,7 +55,7 @@ void isr_handler(registers_t regs) {
     if (interrupt_handlers[regs.int_no]) {
         interrupt_handlers[regs.int_no](regs);
     } else {
-        print_string("Unhandled interrupt: ");
+        vga_print("Unhandled interrupt: ");
         // You might want to print the number too here
     }
 }

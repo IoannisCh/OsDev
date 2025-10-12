@@ -20,10 +20,6 @@ void remap_pic() {
     port_byte_out(0xA1, 0xFF);  // Mask all IRQs on PIC2
 }
 
-void vga_init() {
-    vga_clear_screen();
-}
-
 void kernel_main() {
     remap_pic();
     vga_init();
@@ -36,7 +32,7 @@ void kernel_main() {
 
     init_keyboard();  // Now it's safe to register handlers
 
-    print_string("Welcome to HadOS!\n");
+    vga_print("Welcome to HadOS!\n");
 
     asm volatile("sti");
 
