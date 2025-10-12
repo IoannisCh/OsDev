@@ -12,7 +12,8 @@ KERNEL_BIN = kernel.bin
 GRUB_CFG = $(GRUB_DIR)/grub.cfg
 
 # Add frame_allocator.o to object list
-OBJS = $(OBJ_DIR)/kernel.o \
+OBJS = $(OBJ_DIR)/boot.o\
+	   $(OBJ_DIR)/kernel.o \
        $(OBJ_DIR)/vga.o \
        $(OBJ_DIR)/paging.o \
        $(OBJ_DIR)/paging_asm.o \
@@ -107,6 +108,10 @@ $(OBJ_DIR)/shell.o: $(SRC_DIR)/shell.c | $(OBJ_DIR)
 	@echo "Compiling shell.c..."
 	gcc $(CFLAGS) -c $(SRC_DIR)/shell.c -o $@
 
+$(OBJ_DIR)/boot.o : $(ASM_DIR)/boot.asm | $(OBJ_DIR)
+	@echo "Assembling boot.asm..."
+	nasm -f elf32 $(ASM_DIR)/boot.asm -o $@
+
 # Assemble paging.asm
 $(OBJ_DIR)/paging_asm.o: $(ASM_DIR)/paging.asm | $(OBJ_DIR)
 	@echo "Assembling paging.asm..."
@@ -123,12 +128,11 @@ kernel.bin: kernel.elf
 	objcopy -O binary kernel.elf kernel.bin
 
 # Assemble bootloader and combine with kernel
-os-image: $(BOOT_DIR)/boot.asm kernel.bin $(ISO_DIR)/boot/kernel.bin $(ISO_DIR)/boot/grub/grub.cfg
-	@echo "Assembling bootloader..."
-	nasm -f bin $(BOOT_DIR)/boot.asm -o boot.bin
-	@echo "Building OS image..."
-	cat boot.bin kernel.bin > $(ISO_DIR)/boot/kernel.bin
-	@echo "GRUB config and kernel copied; ready for ISO generation"
+os-image: kernel.elf $(ISO_DIR)/boot/grub/grub.cfg
+	@echo "Copying kernel ELF for GRUB..."
+	mkdir -p $(ISO_DIR)/boot
+	cp kernel.elf $(ISO_DIR)/boot/kernel.elf
+	cp $(GRUB_CFG) $(ISO_DIR)/boot/grub/grub.cfg
 
 
 # Generate the ISO image using GRUB

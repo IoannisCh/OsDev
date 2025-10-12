@@ -45,8 +45,5 @@ void port_byte_out(uint16_t port, uint8_t data){
     asm volatile("outb %0, %1" : : "a"(data), "Nd"(port));
 }
 
-void _start(void) {  // Or int _start(void) - check your ABI
-    kernel_main(); // Call your kernel's main function
-}
 
 
