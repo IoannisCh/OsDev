@@ -10,19 +10,20 @@ ISO_DIR = iso
 GRUB_CFG = $(GRUB_DIR)/grub.cfg
 
 # Add frame_allocator.o to object list
-OBJS = $(OBJ_DIR)/boot.o\
-	   $(OBJ_DIR)/kernel.o \
+OBJS = $(OBJ_DIR)/boot.o \
+       $(OBJ_DIR)/kernel.o \
        $(OBJ_DIR)/vga.o \
        $(OBJ_DIR)/paging.o \
        $(OBJ_DIR)/paging_asm.o \
-       $(OBJ_DIR)/frame_allocator.o\
-       $(OBJ_DIR)/panic.o\
-       $(OBJ_DIR)/keyboard.o\
-       $(OBJ_DIR)/idt.o\
-       $(OBJ_DIR)/isr.o\
-       $(OBJ_DIR)/load_idt.o\
-       $(OBJ_DIR)/io.o\
-	   $(OBJ_DIR)/shell.o
+       $(OBJ_DIR)/frame_allocator.o \
+       $(OBJ_DIR)/panic.o \
+       $(OBJ_DIR)/keyboard.o \
+       $(OBJ_DIR)/idt.o \
+       $(OBJ_DIR)/isr.o \
+       $(OBJ_DIR)/isr_asm.o \
+       $(OBJ_DIR)/load_idt.o \
+       $(OBJ_DIR)/io.o \
+       $(OBJ_DIR)/shell.o
 
 all: iso
 
@@ -46,12 +47,15 @@ $(OBJ_DIR)/%.o : $(ASM_DIR)/%.asm | $(OBJ_DIR)
 $(OBJ_DIR)/paging_asm.o : $(ASM_DIR)/paging.asm | $(OBJ_DIR)
 	nasm -f elf32 $(ASM_DIR)/paging.asm -o $@
 
+$(OBJ_DIR)/isr_asm.o : $(ASM_DIR)/isr.asm | $(OBJ_DIR)
+	nasm -f elf32 $(ASM_DIR)/isr.asm -o $@
+
 # Link the kernel
 kernel.elf: $(OBJS)
 	ld -m elf_i386 $(LDFLAGS) -o $@  $(OBJS) --oformat elf32-i386
 
 # ISO
-os-image: kernel.elf $(GRUB_CFG) | $(ISO_DIR)/boot/grub/grub.cfg
+os-image: kernel.elf $(GRUB_CFG) | $(ISO_DIR)/boot/grub
 	@echo "Creating ISO image..."
 	cp kernel.elf $(ISO_DIR)/boot/kernel.elf
 	cp $(GRUB_CFG) $(ISO_DIR)/boot/grub/grub.cfg
@@ -59,7 +63,7 @@ os-image: kernel.elf $(GRUB_CFG) | $(ISO_DIR)/boot/grub/grub.cfg
 iso: os-image
 	grub-mkrescue -o os.iso $(ISO_DIR)
 run: iso
-	qemu-system-i386 -cdrom os-image.iso -m 512 -vga std
+	qemu-system-i386 -cdrom os.iso -m 512 -vga std
 
 clean:
 	rm -rf $(OBJ_DIR) *.elf os-image.iso $(ISO_DIR) 

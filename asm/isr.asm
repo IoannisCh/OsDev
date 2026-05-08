@@ -35,7 +35,7 @@ isr_stub_3:
 
 ; === Special handler for interrupt 33 (keyboard) ===
 global isr_stub_33
-extern isr_common_stub
+
 isr_stub_33:
     cli
     push byte 0          ; Dummy error code
@@ -58,7 +58,9 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
+    push esp
     call isr_handler
+    add esp, 4           ; Clean up the argument
 
     pop gs
     pop fs
